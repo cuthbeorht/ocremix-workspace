@@ -1,9 +1,50 @@
 version: "3.9"
 services:
+
+  ocremix-api:
+#    image: ocremix-api:latest
+    build: ../ocremix-api/
+    depends_on:
+      - ocremix-mongo-db
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_HOST=ocremix-mongo-db
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=ocremix
+    command: ["python", "api.py"]
+
   ocremix-mongo-db:
     image: mongo:latest
     ports:
      - 27017:27017
+
+  ocremix-consumer:
+    build: ../ocremix-consumer
+    depends_on:
+      - queue
+      - ocremix-mongo-db
+    environment:
+      - MONGO_HOST=ocremix-mongo-db
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=ocremix
+      - RABBITMQ_HOST=queue
+
+  ocremix-spider:
+    build: ../ocremix-spider/
+    volumes:
+      - ocremix-html:/tmp/ocremix
+    command: ["scrapy", "crawl", "ocremix"]
+
+  ocremix-html-parser:
+    build: ../ocremix-html-parser/
+    volumes:
+      - ocremix-html:/tmp/ocremix
+    environment:
+      - RABBITMQ_HOST=queue
+    depends_on:
+      - queue
+    command: ["python", "main.py"]
 
   localstack:
     image: localstack/localstack
@@ -27,5 +68,11 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+
 volumes:
   ocremix-html:
