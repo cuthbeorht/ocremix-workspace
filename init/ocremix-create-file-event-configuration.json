@@ -1,0 +1,11 @@
+ {
+   "TopicConfigurations": [
+     {
+       "Id": "test-event",
+       "TopicArn": "arn:aws:sns:us-east-1:000000000000:ocremix-create-raw-html-file-events",
+       "Events": [
+         "s3:ObjectCreated:*"
+       ]
+     }
+   ]
+ }
