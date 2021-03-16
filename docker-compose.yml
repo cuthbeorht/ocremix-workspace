@@ -60,7 +60,7 @@ services:
       - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- }
       - KINESIS_ERROR_PROBABILITY=${KINESIS_ERROR_PROBABILITY- }
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - START_WEB=1
+      - START_WEB=0
     volumes:
       - "./init:/docker-entrypoint-initaws.d"
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"

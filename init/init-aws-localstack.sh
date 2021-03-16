@@ -25,6 +25,10 @@ aws --endpoint-url http://localhost:4566 s3api put-bucket-notification-configura
   --bucket ocremix-raw \
   --notification-configuration file:///docker-entrypoint-initaws.d/ocremix-create-file-event-configuration.json
 
+# List S3 Notifications
+aws --endpoint-url http://localstack:4566 s3api get-bucket-notification-configuration \
+  --bucket ocremix-raw
+
 # Create a Queue
 aws --endpoint-url http://localhost:4566 sqs create-queue \
     --queue-name ocremix-new-file
