@@ -17,6 +17,12 @@ aws --endpoint-url http://localhost:4566 s3api list-buckets
 aws --endpoint-url http://localhost:4566 sns create-topic \
   --name ocremix-create-raw-html-file-events
 
+aws --endpoint-url http://localhost:4566 sns create-topic \
+  --name ocremix-parsed-file-info
+
+aws --endpoint-url http://localhost:4566 sns create-topic \
+  --name ocremix-parsed-file-info-dlq
+
 # List Topics
 aws --endpoint-url http://localhost:4566 sns list-topics
 
@@ -32,6 +38,8 @@ aws --endpoint-url http://localstack:4566 s3api get-bucket-notification-configur
 # Create a Queue
 aws --endpoint-url http://localhost:4566 sqs create-queue \
     --queue-name ocremix-new-file
+aws --endpoint-url http://localhost:4566 sqs create-queue \
+    --queue-name ocremix-parsed-file-info
 
 # List Queue
 aws --endpoint-url http://localhost:4566 sqs list-queues
@@ -41,6 +49,11 @@ aws --endpoint-url http://localhost:4566 sns subscribe \
     --topic-arn arn:aws:sns:us-east-1:000000000000:ocremix-create-raw-html-file-events \
     --protocol sqs \
     --notification-endpoint http://localhost:4566/000000000000/ocremix-new-file
+
+aws --endpoint-url http://localhost:4566 sns subscribe \
+    --topic-arn arn:aws:sns:us-east-1:000000000000:ocremix-parsed-file-info \
+    --protocol sqs \
+    --notification-endpoint http://localhost:4566/000000000000/ocremix-parsed-file-info
 
 # List Subscriptions
 aws --endpoint-url http://localhost:4566 sns list-subscriptions

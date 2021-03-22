@@ -22,13 +22,15 @@ services:
   ocremix-consumer:
     build: ../ocremix-consumer
     depends_on:
-      - queue
       - ocremix-mongo-db
     environment:
       - MONGO_HOST=ocremix-mongo-db
       - MONGO_PORT=27017
       - MONGO_DATABASE=ocremix
-      - RABBITMQ_HOST=queue
+      - ENV=dev
+      - AWS_ACCESS_KEY_ID=foo
+      - AWS_SECRET_ACCESS_KEY=bar
+      - AWS_DEFAULT_REGION=us-east-1
 
   ocremix-spider:
     build: ../ocremix-spider/
@@ -48,9 +50,12 @@ services:
     volumes:
       - ocremix-html:/tmp/ocremix
     environment:
-      - RABBITMQ_HOST=queue
+      - ENV=dev
+      - AWS_ACCESS_KEY_ID=foo
+      - AWS_SECRET_ACCESS_KEY=bar
+      - AWS_DEFAULT_REGION=us-east-1
     depends_on:
-      - queue
+      - localstack
     command: ["python", "main.py"]
 
   localstack:
@@ -71,17 +76,6 @@ services:
     volumes:
       - "./init:/docker-entrypoint-initaws.d"
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
-
-  queue:
-    image: rabbitmq:3-management
-    ports:
-      - 5672:5672
-      - 15672:15672
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
-      interval: 5s
-      timeout: 15s
-      retries: 1
 
 volumes:
   ocremix-html:
