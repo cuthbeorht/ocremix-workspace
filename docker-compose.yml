@@ -1,18 +1,18 @@
 version: "3.9"
 services:
 
-  ocremix-api:
-#    image: ocremix-api:latest
-    build: ../ocremix-api/
-    depends_on:
-      - ocremix-mongo-db
-    ports:
-      - "5000:5000"
-    environment:
-      - MONGO_HOST=ocremix-mongo-db
-      - MONGO_PORT=27017
-      - MONGO_DATABASE=ocremix
-    command: ["python", "api.py"]
+#  ocremix-api:
+##    image: ocremix-api:latest
+#    build: ../ocremix-api/
+#    depends_on:
+#      - ocremix-mongo-db
+#    ports:
+#      - "5000:5000"
+#    environment:
+#      - MONGO_HOST=ocremix-mongo-db
+#      - MONGO_PORT=27017
+#      - MONGO_DATABASE=ocremix
+#    command: ["python", "api.py"]
 
   ocremix-mongo-db:
     image: mongo:latest
@@ -23,6 +23,7 @@ services:
     build: ../ocremix-consumer
     depends_on:
       - ocremix-mongo-db
+      - localstack
     environment:
       - MONGO_HOST=ocremix-mongo-db
       - MONGO_PORT=27017
@@ -31,6 +32,8 @@ services:
       - AWS_ACCESS_KEY_ID=foo
       - AWS_SECRET_ACCESS_KEY=bar
       - AWS_DEFAULT_REGION=us-east-1
+      - AWS_PARSED_FILE_QUEUE=http://localstack:4566/000000000000/ocremix-parsed-file-info
+    command: ["python", "-m", "main.py"]
 
   ocremix-spider:
     build: ../ocremix-spider/
