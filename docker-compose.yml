@@ -79,5 +79,18 @@ services:
       - "./init:/docker-entrypoint-initaws.d"
       - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
 
+  logger:
+    image: sebp/elk
+    ports:
+      - 5601:5601
+      - 9200:9200
+      - 5044:5044
+      - 5959:5959/udp
+    volumes:
+      - type: bind
+        source: "./init/03-logstash-tcp-input.conf"
+        target: "/etc/logstash/conf.d/03-logstash-tcp-input.conf"
+
+
 volumes:
   ocremix-html:
